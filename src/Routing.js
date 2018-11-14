@@ -7,7 +7,7 @@ const Routing=()=>{
     <BrowserRouter>
       <div>
         <Route path="/" exact component={App}/>
-        <Route path="/a/:title" component={A}/>
+        <Route path="/movie/:title" component={A}/>
       </div>
     </BrowserRouter>
   )

@@ -1,12 +1,13 @@
+// todo if image is not present show a default one
 import React from 'react'
 import {Link} from 'react-router-dom'
-import './App.css'
+import styled from './App.style'
 class App extends React.Component{
   constructor(props){
     super(props)
     this.state={
-      title:'',
-      year:'',
+      titleInput:'',
+      yearInput:'',
       recent:[],
       type:'movie',
       error:null
@@ -20,12 +21,12 @@ class App extends React.Component{
   }
   titleInput(e){
     this.setState({
-      title:e.target.value
+      titleInput:e.target.value
     })
   }
   yearInput(e){
     this.setState({
-      year:e.target.value
+      yearInput:e.target.value
     })
   }
   typechange(e){
@@ -47,13 +48,13 @@ class App extends React.Component{
     }
   }
   fetchMovies(){
-    fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.title}&y=${this.state.year}
+    fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.titleInput}&y=${this.state.yearInput}
       &type=${this.state.type}`)
     .then(res=>res.json()).then(data=>{
       if(data.Response==="True"){
         this.recentSetState(data)
         localStorage.setItem("recent",JSON.stringify(data))
-        window.open(`a/${data.Title}`)
+        window.open(`movie/${data.Title}`)
       }
       else{
         this.setState({
@@ -64,16 +65,12 @@ class App extends React.Component{
   }
   recentListDisplay(){
     return (this.state.recent.length>0?this.state.recent.slice(0).reverse().map((val,index)=>{
-      const pageObj={
-        pathname:`/a/${val.Title}`,
-        state:{
-          data:val
-        }
-      }
       return(
-        <div key={index}>
-          <Link to={pageObj} target='_blank' onClick={()=>this.recentLink(val)}>{val.Title}</Link>
-          <img src={val.Poster} alt={val.Title} height='150' width='150'/>
+        <div key={index} style={styled.Card}>
+          <img style={{width:'100%'}}src={val.Poster} alt={val.Title} height='200' width='200' title={val.Title}/>
+          <div style={styled.Container}>
+            <Link to={`/movie/${val.Title}`} target='_blank' onClick={()=>this.recentLink(val)}><h3>{val.Title}</h3></Link>
+          </div>
         </div>
       )
     }):null)
@@ -83,18 +80,20 @@ class App extends React.Component{
   }
   render(){
     return(
-      <div className="home">
-        <h1>omdb movie search</h1>
-        <input placeholder="Enter movie title" onChange={this.titleInput}/>
-        <input placeholder="Enter Year" onChange={this.yearInput}/>
-        <select value={this.state.value} onChange={this.typechange}>
-            <option value="movie">Movie</option>
-            <option value="series">Series</option>
-            <option value="episode">Episode</option>
-          </select>
-        <button onClick={this.fetchMovies}>Search</button>
-        {this.state.error!==null?<h1>{this.state.error}</h1>:null}
-        {this.state.recent.length!==0?<div>Recent List: {this.recentListDisplay()}</div>:null}
+      <div style={styled.MainBody}>
+        <h1 style={styled.Header}>omdb movie/tv series/episodes search</h1>
+        <div style={styled.InputBody}>
+          <input style={styled.Input} placeholder="Enter movie title" onChange={this.titleInput}/>
+          <input style={styled.Input} placeholder="Enter Year" onChange={this.yearInput}/>
+          <select style={styled.Select} value={this.state.value} onChange={this.typechange}>
+              <option value="movie">Movie</option>
+              <option value="series">Series</option>
+              <option value="episode">Episode</option>
+            </select>
+          <button style={styled.Button} onClick={this.fetchMovies}>SEARCH</button>
+        </div>
+        {this.state.error!==null?<h2 style={styled.Error}>{this.state.error}</h2>:null}
+        {this.state.recent.length!==0?<div style={styled.Grid}>{this.recentListDisplay()}</div>:null}
       </div>
     )
   }
