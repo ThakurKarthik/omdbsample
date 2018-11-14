@@ -47,7 +47,7 @@ class App extends React.Component{
     }
   }
   fetchMovies(){
-    fetch(`http://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.title}&y=${this.state.year}
+    fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.title}&y=${this.state.year}
       &type=${this.state.type}`)
     .then(res=>res.json()).then(data=>{
       if(data.Response==="True"){
