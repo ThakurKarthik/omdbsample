@@ -1,6 +1,7 @@
 // todo if image is not present show a default one
 import React from 'react'
 import {Link} from 'react-router-dom'
+import Loader from 'react-loader'
 import styled from './App.style'
 class App extends React.Component{
   constructor(props){
@@ -8,25 +9,36 @@ class App extends React.Component{
     this.state={
       titleInput:'',
       yearInput:'',
+      imdbIDInput:'',
+      isFetching1:false,
+      isFetching2:false,
       recent:[],
       type:'movie',
       error:null
     }
-    this.titleInput=this.titleInput.bind(this)
-    this.yearInput=this.yearInput.bind(this)
+    this.titleChange=this.titleChange.bind(this)
+    this.yearChange=this.yearChange.bind(this)
     this.typechange=this.typechange.bind(this)
-    this.fetchMovies=this.fetchMovies.bind(this)
+    this.imdbIdChange=this.imdbIdChange.bind(this)
+    this.fetchByTitle=this.fetchByTitle.bind(this)
+    this.fetchByIMDB=this.fetchByIMDB.bind(this)
     this.recentListDisplay=this.recentListDisplay.bind(this)
     this.recentSetState=this.recentSetState.bind(this)
+    this.openPage=this.openPage.bind(this)
   }
-  titleInput(e){
+  titleChange(e){
     this.setState({
       titleInput:e.target.value
     })
   }
-  yearInput(e){
+  yearChange(e){
     this.setState({
       yearInput:e.target.value
+    })
+  }
+  imdbIdChange(e){
+    this.setState({
+      imdbIDInput:e.target.value
     })
   }
   typechange(e){
@@ -38,38 +50,99 @@ class App extends React.Component{
     if(this.state.recent.length<5){
       this.setState({
         recent:[...this.state.recent,data],
-        error:''
+        titleInput:'',
+        yearInput:'',
+        imdbIDInput:'',
+        error:'',
+        isFetching1:false,
+        isFetching2:false
       })
     }
     else{
       this.setState({
-        recent:[...this.state.recent.slice(1,5),data]
+        recent:[...this.state.recent.slice(1,5),data],
+        titleInput:'',
+        yearInput:'',
+        imdbIDInput:'',
+        error:'',
+        isFetching1:false,
+        isFetching2:false
       })
     }
   }
-  fetchMovies(){
+  openPage(title,type){
+    if(type==='movie'){
+      window.open(`movie/${title}`)
+    }
+    else if(type==='series'){
+      window.open(`series/${title}`)
+    }
+    else{
+      window.open(`episode/${title}`)
+    }
+  }
+  fetchByTitle(){
+    this.setState({
+      isFetching1:true,
+      error:''
+    })
     fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.titleInput}&y=${this.state.yearInput}
       &type=${this.state.type}`)
     .then(res=>res.json()).then(data=>{
       if(data.Response==="True"){
         this.recentSetState(data)
         localStorage.setItem("recent",JSON.stringify(data))
-        window.open(`movie/${data.Title}`)
+        this.openPage(data.Title,data.Type)
       }
       else{
         this.setState({
-          error:data.Error
+          error:data.Error,
+          yearInput:'',
+          titleInput:'',
+          isFetching1:false
         })
       }
-    }).catch(error=>console.log('error',error))
+    }).catch(error=>{
+      this.setState({
+        error:error,
+        isFetching1:false
+      })
+    })
+  }
+  fetchByIMDB(){
+    this.setState({
+      isFetching2:true,
+      error:''
+    })
+    fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&i=${this.state.imdbIDInput}`)
+    .then(res=>res.json()).then(data=>{
+      if(data.Response==="True"){
+        this.recentSetState(data)
+        localStorage.setItem("recent",JSON.stringify(data))
+        this.openPage(data.Title,data.Type)
+      }
+      else{
+        this.setState({
+          error:data.Error,
+          isFetching2:false
+        })
+      }
+    }).catch(error=>{
+      this.setState({
+        error:error,
+        isFetching2:false
+      })
+    })
   }
   recentListDisplay(){
     return (this.state.recent.length>0?this.state.recent.slice(0).reverse().map((val,index)=>{
       return(
         <div key={index} style={styled.Card}>
-          <img style={{width:'100%'}}src={val.Poster} alt={val.Title} height='200' width='200' title={val.Title}/>
+          <div>
+            <img style={styled.img}src={val.Poster} alt={val.Title} title={val.Title}/>
+          </div>
           <div style={styled.Container}>
-            <Link to={`/movie/${val.Title}`} target='_blank' onClick={()=>this.recentLink(val)}><h3>{val.Title}</h3></Link>
+            <Link to={`/${val.Type}/${val.Title}`} target='_blank' onClick={()=>this.recentLink(val)}><h3>{val.Title}</h3></Link>
           </div>
         </div>
       )
@@ -82,16 +155,31 @@ class App extends React.Component{
     return(
       <div style={styled.MainBody}>
         <h1 style={styled.Header}>omdb movie/tv series/episodes search</h1>
+
         <div style={styled.InputBody}>
-          <input style={styled.Input} placeholder="Enter movie title" onChange={this.titleInput}/>
-          <input style={styled.Input} placeholder="Enter Year" onChange={this.yearInput}/>
+          <div style={styled.Text}>Search by Title</div>
+          <input style={styled.Input} placeholder="Enter movie title" onChange={this.titleChange} value={this.state.titleInput}/>
+          <input style={styled.Input} placeholder="Enter Year" onChange={this.yearChange} value={this.state.yearInput}/>
           <select style={styled.Select} value={this.state.value} onChange={this.typechange}>
               <option value="movie">Movie</option>
               <option value="series">Series</option>
               <option value="episode">Episode</option>
-            </select>
-          <button style={styled.Button} onClick={this.fetchMovies}>SEARCH</button>
+          </select>
+          <button style={styled.Button} onClick={this.fetchByTitle}>SEARCH</button>
+          <div style={styled.LoaderStyle}>
+            <Loader loaded={!this.state.isFetching1}  options={styled.Loader}/>
+          </div>
         </div>
+
+        <div style={styled.InputBody2}>
+          <div style={styled.Text}>Search by IMDB ID</div>
+          <input style={styled.Input} placeholder="Enter IMDB id" onChange={this.imdbIdChange} value={this.state.imdbIDInput}/>
+          <button style={styled.Button} onClick={this.fetchByIMDB}>SEARCH</button>
+          <div style={styled.LoaderStyle}>
+            <Loader loaded={!this.state.isFetching2}  options={styled.Loader}/>
+          </div>
+        </div>
+
         {this.state.error!==null?<h2 style={styled.Error}>{this.state.error}</h2>:null}
         {this.state.recent.length!==0?<div style={styled.Grid}>{this.recentListDisplay()}</div>:null}
       </div>

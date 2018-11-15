@@ -16,7 +16,7 @@ class MovieDataPage extends Component{
   }
   render(){
     const MovieData=this.state.movieData
-    let {Ratings,BoxOffice,Production,DVD}=MovieData
+    let {Ratings}=MovieData
     return(
       <div style={styled.MainPage}>
         <div style={styled.grid}>
@@ -36,7 +36,6 @@ class MovieDataPage extends Component{
             </div>
             <div style={styled.Row}>
               <span ><strong>Runtime</strong>: {MovieData.Runtime}</span>
-              <span><strong>BoxOffice</strong>: {BoxOffice}</span>
             </div>
             <div style={styled.Row}>
               <span ><strong>Genre</strong>: {MovieData.Genre}</span>
@@ -68,16 +67,10 @@ class MovieDataPage extends Component{
             </div>
             <div style={styled.SideHeading}>More Info:</div>
             <div style={styled.Row}>
-              <span style={{paddingLeft:'10px'}}>Production: {Production}</span>
-            </div>
-            <div style={styled.Row}>
               <span style={{paddingLeft:'10px'}}>IMDB Title: {MovieData.imdbID}</span>
             </div>
             <div style={styled.Row}>
               <span style={{paddingLeft:'10px'}}>Country: {MovieData.Country}</span>
-            </div>
-            <div style={styled.Row}>
-              <span style={{paddingLeft:'10px'}}>DVD: {DVD}</span>
             </div>
           </div>
         </div>

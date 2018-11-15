@@ -1,6 +1,6 @@
 const MainBody={
   backgroundColor:'#EEEFF1',
-  height:'120vh'
+  height:'100%'
 }
 const ErrorBody={
   textAlign:'center',
@@ -14,6 +14,13 @@ const Header={
 const InputBody={
   display:'flex',
   alignItems:'center',
+  width: '70%',
+  margin:'60px auto 30px auto',
+  height:'auto',
+}
+const InputBody2={
+  display:'flex',
+  alignItems:'center',
   width:'50%',
   margin:'60px auto 30px auto',
   height:'auto',
@@ -22,16 +29,16 @@ const Grid={
   display:'flex',
   justifyContent:'space-around',
   flexWrap:'wrap',
-  // margin:'20px auto 20px auto',
-  alignContent:'center'
+  alignContent:'flex-end'
 }
 const Card={
   boxShadow:'0 4px 8px 0 rgba(0,0,0,0.2)',
-  margin:'20px auto auto auto'
+  border:'2px solid black',
 }
 const Container={
   padding:'2px 16px',
   backgroundColor:'yellow',
+  margin:'auto'
 }
 const Input={
   height:'45px',
@@ -61,10 +68,31 @@ const SearchButton={
   backgroundColor:'#62D643',
   borderRadius:'5px'
 }
+const Text={
+  fontSize:'15px',
+  fontWeight:'bold',
+  textTransform:'uppercase',
+  textAlign:'center',
+  width:'300px'
+}
+const Loader={
+  color:'blue',
+  position:'relative',
+}
+
+const LoaderStyle={
+  width: '20%'
+}
+const img={
+  minHeight:'200px',
+  maxHeight:'250px',
+  width:'100%'
+}
 let styled={}
 styled.Header=Header
 styled.MainBody=MainBody
 styled.InputBody=InputBody
+styled.InputBody2=InputBody2
 styled.Grid=Grid
 styled.Card=Card
 styled.Container=Container
@@ -72,4 +100,8 @@ styled.Input=Input
 styled.Select=SelectInput
 styled.Button=SearchButton
 styled.Error=ErrorBody
+styled.Text=Text
+styled.LoaderStyle = LoaderStyle
+styled.Loader=Loader
+styled.img=img
 export default styled
