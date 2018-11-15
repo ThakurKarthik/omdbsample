@@ -34,6 +34,7 @@ const Grid={
 const Card={
   boxShadow:'0 4px 8px 0 rgba(0,0,0,0.2)',
   border:'2px solid black',
+  margin:'20px auto'
 }
 const Container={
   padding:'2px 16px',
