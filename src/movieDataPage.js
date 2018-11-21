@@ -8,15 +8,15 @@ class MovieDataPage extends Component{
     }
   }
   componentDidMount(){
-    const jsondata=localStorage.getItem("recent")
-    const movieData=JSON.parse(jsondata)
+    const jsonData=localStorage.getItem("recent")
+    const movieData=JSON.parse(jsonData)
     this.setState({
       movieData:movieData
     })
   }
   render(){
     const MovieData=this.state.movieData
-    let {Ratings,BoxOffice,Production,DVD}=MovieData
+    let {Ratings:ratings,BoxOffice:boxOffice,Production:production,DVD}=MovieData
     return(
       <div style={styled.MainPage}>
         <div style={styled.grid}>
@@ -36,7 +36,7 @@ class MovieDataPage extends Component{
             </div>
             <div style={styled.Row}>
               <span ><strong>Runtime</strong>: {MovieData.Runtime}</span>
-              <span><strong>BoxOffice</strong>: {BoxOffice}</span>
+              <span><strong>BoxOffice</strong>: {boxOffice}</span>
             </div>
             <div style={styled.Row}>
               <span ><strong>Genre</strong>: {MovieData.Genre}</span>
@@ -55,7 +55,7 @@ class MovieDataPage extends Component{
             <div style={styled.SideHeading}>Ratings:</div>
             <ul>
               {
-                Ratings && Ratings.map(rating=>(
+                ratings && ratings.map(rating=>(
                   <li key={rating.Source}>{rating.Source}: {rating.Value}</li>
                 ))
               }
@@ -68,7 +68,7 @@ class MovieDataPage extends Component{
             </div>
             <div style={styled.SideHeading}>More Info:</div>
             <div style={styled.Row}>
-              <span style={{paddingLeft:'10px'}}>Production: {Production}</span>
+              <span style={{paddingLeft:'10px'}}>Production: {production}</span>
             </div>
             <div style={styled.Row}>
               <span style={{paddingLeft:'10px'}}>IMDB Title: {MovieData.imdbID}</span>

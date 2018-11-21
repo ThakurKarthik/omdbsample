@@ -8,15 +8,15 @@ class MovieDataPage extends Component{
     }
   }
   componentDidMount(){
-    const jsondata=localStorage.getItem("recent")
-    const movieData=JSON.parse(jsondata)
+    const jsonData=localStorage.getItem("recent")
+    const movieData=JSON.parse(jsonData)
     this.setState({
       movieData:movieData
     })
   }
   render(){
     const MovieData=this.state.movieData
-    let {Ratings}=MovieData
+    let {Ratings:ratings}=MovieData
     return(
       <div style={styled.MainPage}>
         <div style={styled.grid}>
@@ -54,7 +54,7 @@ class MovieDataPage extends Component{
             <div style={styled.SideHeading}>Ratings:</div>
             <ul>
               {
-                Ratings && Ratings.map(rating=>(
+                ratings && ratings.map(rating=>(
                   <li key={rating.Source}>{rating.Source}: {rating.Value}</li>
                 ))
               }

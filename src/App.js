@@ -14,9 +14,9 @@ class App extends React.Component{
       isFetching2:false,
       recent:[],
       type:'movie',
-      error:null
+      error:''
     }
-    this.titleChange=this.titleChange.bind(this)
+    this.titleChange=this.titleChange.bind(this)//bindings for functions
     this.yearChange=this.yearChange.bind(this)
     this.typechange=this.typechange.bind(this)
     this.imdbIdChange=this.imdbIdChange.bind(this)
@@ -46,31 +46,33 @@ class App extends React.Component{
       type:e.target.value
     })
   }
-  recentSetState(data){
+  recentSetState(data){//to show the last five searches
     if(this.state.recent.length<5){
       this.setState({
-        recent:[...this.state.recent,data],
+        recent:[...this.state.recent,data],//set the data
         titleInput:'',
         yearInput:'',
         imdbIDInput:'',
         error:'',
         isFetching1:false,
-        isFetching2:false
+        isFetching2:false,
+        type:'movie'
       })
     }
     else{
       this.setState({
-        recent:[...this.state.recent.slice(1,5),data],
+        recent:[...this.state.recent.slice(1,5),data],//slice to maintain last four recent searches
         titleInput:'',
         yearInput:'',
         imdbIDInput:'',
         error:'',
         isFetching1:false,
-        isFetching2:false
+        isFetching2:false,
+        type:'movie'
       })
     }
   }
-  openPage(title,type){
+  openPage(title,type){//to open link in new tab
     if(type==='movie'){
       window.open(`movie/${title}`)
     }
@@ -81,7 +83,7 @@ class App extends React.Component{
       window.open(`episode/${title}`)
     }
   }
-  fetchByTitle(){
+  fetchByTitle(){//to search by title
     this.setState({
       isFetching1:true,
       error:''
@@ -89,27 +91,30 @@ class App extends React.Component{
     fetch(`https://www.omdbapi.com/?&apikey=1a984dfa&t=${this.state.titleInput}&y=${this.state.yearInput}
       &type=${this.state.type}`)
     .then(res=>res.json()).then(data=>{
-      if(data.Response==="True"){
+      if(data.Response==="True"){//the data received from this api has a key Response
         this.recentSetState(data)
         localStorage.setItem("recent",JSON.stringify(data))
         this.openPage(data.Title,data.Type)
       }
       else{
-        this.setState({
+        this.setState({// if response is False then set the error as not found
           error:data.Error,
           yearInput:'',
           titleInput:'',
-          isFetching1:false
+          isFetching1:false,
+          type:'movie'
         })
       }
-    }).catch(error=>{
+    }).catch(error=>{//set the error if fetch fails to retreive data
       this.setState({
-        error:error,
-        isFetching1:false
+        error:error.message,
+        isFetching1:false,
+        type:'movie'
       })
     })
   }
-  fetchByIMDB(){
+
+  fetchByIMDB(){//to search by imdbid
     this.setState({
       isFetching2:true,
       error:''
@@ -124,13 +129,17 @@ class App extends React.Component{
       else{
         this.setState({
           error:data.Error,
-          isFetching2:false
+          isFetching2:false,
+          type:'movie',
+          imdbIDInput:''
         })
       }
     }).catch(error=>{
       this.setState({
-        error:error,
-        isFetching2:false
+        error:error.message,
+        isFetching2:false,
+        type:'movie',
+        imdbIDInput:''
       })
     })
   }
@@ -160,7 +169,7 @@ class App extends React.Component{
           <div style={styled.Text}>Search by Title</div>
           <input style={styled.Input} placeholder="Enter movie title" onChange={this.titleChange} value={this.state.titleInput}/>
           <input style={styled.Input} placeholder="Enter Year" onChange={this.yearChange} value={this.state.yearInput}/>
-          <select style={styled.Select} value={this.state.value} onChange={this.typechange}>
+          <select style={styled.Select} value={this.state.type} onChange={this.typechange}>
               <option value="movie">Movie</option>
               <option value="series">Series</option>
               <option value="episode">Episode</option>
@@ -180,7 +189,7 @@ class App extends React.Component{
           </div>
         </div>
 
-        {this.state.error!==null?<h2 style={styled.Error}>{this.state.error}</h2>:null}
+        {this.state.error!==''?<h2 style={styled.Error}>{this.state.error}</h2>:null}
         {this.state.recent.length!==0?<div style={styled.Grid}>{this.recentListDisplay()}</div>:null}
       </div>
     )
